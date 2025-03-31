@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AppPrimaryButton extends StatelessWidget {
-  const AppPrimaryButton({super.key, required this.label, required this.onPressed});
+  const AppPrimaryButton({super.key, required this.label, this.onPressed});
 
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +18,7 @@ class AppPrimaryButton extends StatelessWidget {
         elevation: 0,
         foregroundColor: Colors.white,
         shadowColor: Colors.transparent,
-        padding: const EdgeInsets.symmetric(
-          vertical: 20,
-          horizontal: 24,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
         textStyle: const TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: 15,

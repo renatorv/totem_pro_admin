@@ -8,7 +8,7 @@ class AppTextField extends StatefulWidget {
     this.initialValue,
     this.validator,
     this.onChanged,
-    this.obscure = false,
+    this.isHidden = false,
   });
 
   final String title;
@@ -16,14 +16,14 @@ class AppTextField extends StatefulWidget {
   final String? initialValue;
   final String? Function(String?)? validator;
   final Function(String?)? onChanged;
-  final bool obscure;
+  final bool isHidden;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
 }
 
 class _AppTextFieldState extends State<AppTextField> {
-  late bool isHidden = widget.obscure;
+  late bool obscure = widget.isHidden;
 
   @override
   Widget build(BuildContext context) {
@@ -32,17 +32,14 @@ class _AppTextFieldState extends State<AppTextField> {
       children: [
         Text(
           widget.title,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         TextFormField(
-          obscureText: isHidden,
+          obscureText: obscure,
           validator: widget.validator,
-          onChanged: widget.onChanged,
           initialValue: widget.initialValue,
+          onChanged: widget.onChanged,
           decoration: InputDecoration(
             hintText: widget.hint,
             contentPadding: const EdgeInsets.all(16),
@@ -51,37 +48,23 @@ class _AppTextFieldState extends State<AppTextField> {
             enabledBorder: InputBorder.none,
             focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: BorderSide(
-                color: Colors.blue,
-                width: 2,
-              ),
+              borderSide: BorderSide(color: Colors.blue, width: 2),
             ),
             errorBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: BorderSide(
-                color: Colors.red,
-                width: 1,
-              ),
+              borderSide: BorderSide(color: Colors.red, width: 1),
             ),
             focusedErrorBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: BorderSide(
-                color: Colors.red,
-                width: 2,
-              ),
+              borderSide: BorderSide(color: Colors.red, width: 2),
             ),
-            suffixIcon: widget.obscure
+            suffixIcon: widget.isHidden
                 ? IconButton(
-                    icon: Icon(
-                      isHidden ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                      color: Colors.grey,
-                    ),
+                    icon: Icon(obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined),
                     onPressed: () {
-                      setState(
-                        () {
-                          isHidden = !isHidden;
-                        },
-                      );
+                      setState(() {
+                        obscure = !obscure;
+                      });
                     },
                   )
                 : null,
