@@ -1,8 +1,10 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-
+import 'package:totem_pro_admin/core/di.dart';
 import 'core/router.dart';
 
 void main() {
+  configureDependecies();
   runApp(const MyApp());
 }
 
@@ -14,6 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Totem PRO-Admin',
       debugShowCheckedModeBanner: false,
+      builder: BotToastInit(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),

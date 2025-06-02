@@ -15,7 +15,17 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+## Aula 10
+1 - Explicação sobreo redirectTo => 20 minutos
+parei em 19:29
+
+
+## Aula 9
+1 - Explicação sobre armazenamento dos tokens e refresh_tokens
+Finalizada
+
+
 ## Aula 8
 1 - Explicação visibility => 33 minutos
 
-parei 38 minutos
+parei 1h e 15 minutos e 15 segundos
