@@ -14,6 +14,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
@@ -33,7 +34,8 @@ class _SplashPageState extends State<SplashPage> {
   Future<void> initialize() async {
     final AuthRepository authRepository = getIt();
     await authRepository.initialize();
-    if (!mounted) return;
+    await Future.delayed(const Duration(seconds: 3));
+    if(!mounted) return;
 
     getIt.registerSingleton(true, instanceName: 'isInitialized');
 

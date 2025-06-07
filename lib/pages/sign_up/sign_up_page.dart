@@ -10,18 +10,19 @@ import 'package:totem_pro_admin/widgets/app_text_button.dart';
 import 'package:totem_pro_admin/widgets/app_text_field.dart';
 import 'package:totem_pro_admin/widgets/app_toasts.dart';
 
-class SignInPage extends StatefulWidget {
-  const SignInPage({super.key, required this.redirectTo});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key, required this.redirectTo});
 
   final String? redirectTo;
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  String name = '';
   String email = '';
   String password = '';
 
@@ -44,11 +45,25 @@ class _SignInPageState extends State<SignInPage> {
                     const AppLogo(size: 50),
                     const SizedBox(height: 32),
                     const Text(
-                      'Bem vindo(a) de volta!',
+                      'Vamos criar sua conta!',
                       style: TextStyle(fontSize: 20),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 32),
+                    AppTextField(
+                      title: 'Nome',
+                      hint: 'Digite seu nome completo',
+                      validator: (s) {
+                        if (s == null || s.isEmpty) {
+                          return 'Nome obrigatório';
+                        } else if (s.trim().split(' ').length < 2) {
+                          return 'Digite seu nome completo';
+                        }
+                        return null;
+                      },
+                      onChanged: (s) => name = s ?? '',
+                    ),
+                    const SizedBox(height: 24),
                     AppTextField(
                       title: 'E-mail',
                       hint: 'Digite seu e-mail',
@@ -68,6 +83,8 @@ class _SignInPageState extends State<SignInPage> {
                       validator: (s) {
                         if (s == null || s.isEmpty) {
                           return 'Campo obrigatório';
+                        } else if (s.length < 8) {
+                          return 'Senha muito curta';
                         }
                         return null;
                       },
@@ -75,30 +92,48 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                     const SizedBox(height: 48),
                     AppPrimaryButton(
-                      label: 'Entrar',
+                      label: 'Cadastrar',
                       onPressed: () async {
                         if (formKey.currentState!.validate()) {
                           final AuthRepository authRepository = getIt();
 
                           final l = showLoading();
 
-                          final result = await authRepository.signIn(
+                          final result = await authRepository.signUp(
+                            name: name,
                             email: email,
                             password: password,
                           );
 
                           l();
 
-                          if(result.isLeft) {
+                          if (result.isLeft) {
                             switch(result.left) {
-                              case SignInError.invalidCredentials:
-                                showError('Credenciais inválidas');
-                              case SignInError.unknown:
-                                showError('Um erro inesperado ocorreu. Por favor, tente novamente.');
+                              case SignUpError.userAlreadyExists:
+                                showError(
+                                  'Usuário já existe. Por favor, faça login.',
+                                );
+                              case SignUpError.unknown:
+                                showError(
+                                  'Falha ao criar conta! Por favor, tente novamente.',
+                                );
                             }
+                            return;
+                          }
+
+                          final loginResult = await authRepository.signIn(
+                            email: email,
+                            password: password,
+                          );
+
+                          if(!context.mounted) return;
+
+                          if(loginResult.isLeft) {
+                            showSuccess('Conta criada com sucesso! Faça seu login para continuar.');
+                            context.go('/sign-in');
                           } else {
                             showSuccess('Bem-vindo(a) de volta!');
-                            if(context.mounted) context.go(widget.redirectTo ?? '/home');
+                            context.go(widget.redirectTo ?? '/home');
                           }
                         }
                       },
@@ -106,9 +141,11 @@ class _SignInPageState extends State<SignInPage> {
                     const SizedBox(height: 16),
                     Center(
                       child: AppTextButton(
-                        label: 'Ainda não tenho conta',
+                        label: 'Eu já tenho conta',
                         onPressed: () {
-                          context.go('/sign-up${widget.redirectTo != null ? '?redirectTo=${widget.redirectTo!}' : ''}');
+                          context.go(
+                            '/sign-in${widget.redirectTo != null ? '?redirectTo=${widget.redirectTo!}' : ''}',
+                          );
                         },
                       ),
                     ),

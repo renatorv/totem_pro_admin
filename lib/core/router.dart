@@ -1,19 +1,23 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:totem_pro_admin/core/di.dart';
+import 'package:totem_pro_admin/core/guards/auth_guard.dart';
+import 'package:totem_pro_admin/core/guards/route_guard.dart';
 import 'package:totem_pro_admin/pages/sign_in/sign_in_page.dart';
+import 'package:totem_pro_admin/pages/sign_up/sign_up_page.dart';
 import 'package:totem_pro_admin/pages/splash/splash_page.dart';
-import 'package:totem_pro_admin/repositories/auth_repository.dart';
 
 final router = GoRouter(
   initialLocation: '/splash',
-  observers: [BotToastNavigatorObserver()],
   debugLogDiagnostics: true,
+  observers: [BotToastNavigatorObserver()],
   redirect: (context, state) {
     if (state.fullPath != '/splash') {
-      final bool isInicialized = getIt.isRegistered<bool>(instanceName: 'isInitialized');
-      if (!isInicialized) {
+      final isInitialized = getIt.isRegistered<bool>(
+        instanceName: 'isInitialized',
+      );
+      if (!isInitialized) {
         return '/splash?redirectTo=${state.matchedLocation}';
       }
     }
@@ -22,12 +26,14 @@ final router = GoRouter(
   routes: [
     GoRoute(
       path: '/splash',
-      builder: (_, state) => SplashPage(
-        redirectTo: state.uri.queryParameters['redirectTo'],
-      ),
+      builder: (_, state) {
+        return SplashPage(redirectTo: state.uri.queryParameters['redirectTo']);
+      },
       redirect: (context, state) {
-        final bool isInicialized = getIt.isRegistered<bool>(instanceName: 'isInitialized');
-        if (isInicialized) {
+        final isInitialized = getIt.isRegistered<bool>(
+          instanceName: 'isInitialized',
+        );
+        if (isInitialized) {
           return '/sign-in';
         }
         return null;
@@ -35,31 +41,67 @@ final router = GoRouter(
     ),
     GoRoute(
       path: '/sign-in',
-      builder: (_, state) => SignInPage(
-        redirectTo: state.uri.queryParameters['redirectTo'],
-      ),
+      redirect: (_, state) {
+        return RouteGuard.apply(
+            state,
+            [
+              AuthGuard(invert: true),
+            ]
+        );
+      },
+      builder: (_, state) {
+        return SignInPage(
+            redirectTo: state.uri.queryParameters['redirectTo']
+        );
+      },
+    ),
+    GoRoute(
+      path: '/sign-up',
+      redirect: (_, state) {
+        return RouteGuard.apply(
+            state,
+            [
+              AuthGuard(invert: true),
+            ]
+        );
+      },
+      builder: (_, state) {
+        return SignUpPage(
+            redirectTo: state.uri.queryParameters['redirectTo']
+        );
+      },
     ),
     GoRoute(
       path: '/home',
       redirect: (_, state) {
-        final AuthRepository authRepository = getIt();
-        if (authRepository.authTokens != null) {
-          return '/home';
-        }
-        return null;
+        return RouteGuard.apply(
+          state,
+          [
+            AuthGuard(),
+          ]
+        );
       },
-      builder: (_, state) => Container(),
+      builder: (_, state) {
+        return const Text(
+            'HOME'
+        );
+      },
     ),
-        GoRoute(
+    GoRoute(
       path: '/products',
       redirect: (_, state) {
-        final AuthRepository authRepository = getIt();
-        if (authRepository.authTokens == null) {
-          return '/sign-in?redirectTo=/products';
-        }
-        return null;
+        return RouteGuard.apply(
+            state,
+            [
+              AuthGuard(),
+            ]
+        );
       },
-      builder: (_, state) => Container(),
+      builder: (_, state) {
+        return const Text(
+          'PRODUCTS'
+        );
+      },
     ),
   ],
 );

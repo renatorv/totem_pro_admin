@@ -3,6 +3,6 @@ import 'package:totem_pro_admin/repositories/auth_repository.dart';
 
 final getIt = GetIt.I;
 
-void configureDependecies() {
+void configureDependencies() {
   getIt.registerSingleton(AuthRepository());
 }

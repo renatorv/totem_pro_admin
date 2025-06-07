@@ -16,8 +16,9 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 ## Aula 10
-1 - Explicação sobreo redirectTo => 20 minutos
-parei em 19:29
+REVENDO => PAREI EM 30 MINUTOS
+1 - Explicação sobre redirectTo => 20 minutos
+2 - Explicação guards => 48:42
 
 
 ## Aula 9
